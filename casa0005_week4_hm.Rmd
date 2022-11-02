@@ -1,20 +1,94 @@
 #CASA0005 Week 4 Gender Inequality Homework - Hasan Guler
 
-#load libraries that we need
+###load libraries that we need
 ```{r}
 
 library(sf)
 library(tmap)
 library(here)
 library(sp)
+library(dplyr)
+library(janitor)
+library(tidyverse)
+library(countrycode)
 ```
-#load the global gender inequality data
+###load the global gender inequality data
 ```{r}
 
-gender_data <- read.csv(here::here("week4_hm_data", "HDR21-22_Composite_indices_complete_time_series.csv"))
+hdr_data <- read.csv(here::here("week4_hm_data", "HDR21-22_Composite_indices_complete_time_series.csv"))
 ```
 
-#load our spatial data, which is the boundries of countries in the world
+###load our spatial data, which is the boundries of countries in the world
 ```{r}
-world_data <- read_sf(here::here("week4_hm_data", "World_Countries__Generalized_.shp"))
+world_data <- st_read(here::here("week4_hm_data", "World_Countries__Generalized_.shp"))
 ```
+
+###global gender data has 1008 variables so choose only those required
+```{r}
+gender_data_columns <- hdr_data %>%
+  dplyr::select(c("iso3", "country", "region", "gii_2010","gii_2019"))
+  
+```
+###rearrange our subset data 
+
+1. Change the name of iso3 column to standardize our data making the same name with world data
+2. Standardize all the column names
+3. Creating a new column called difference where gii_2019 - gii_2010
+4. Create a new column by means of converting iso3 into iso2
+
+
+```{r}
+
+gender_data <- gender_data_columns %>%
+  dplyr::rename(iso = "iso3") %>%
+  clean_names() %>%
+  mutate(diff_2019_2010 = gii_2019-gii_2010) %>%
+  mutate(iso_code=countrycode(iso, origin ='iso3c', destination = 'iso2c'))
+
+ 
+
+
+```
+###rearrange the column names of world data since all column names are in uppercase
+
+```{r}
+world_data_sub <- world_data %>%
+  clean_names()
+class(world_data_sub)
+```
+###Join our data to have a spatial world with gii from UNDP data
+
+```{r}
+
+joined_data <- world_data_sub %>%
+  left_join(., 
+            gender_data,
+            by = c("iso" = "iso_code")) %>%
+  drop_na(diff_2019_2010)
+
+  
+```
+
+```{r}
+join_fr<-joined_data %>%
+  filter(iso=="FR")
+```
+
+#displaying on a map (just for testing purpose)
+
+The map does not represent the data effectively since it is just created to test the joined data.
+```{r}
+
+tm_shape(joined_data) + 
+tm_polygons("diff_2019_2010", 
+        title="Gender Inequality Difference",
+        alpha = 0.5)
+```
+
+
+
+
+
+
+
+
