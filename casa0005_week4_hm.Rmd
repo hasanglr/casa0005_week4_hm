@@ -24,12 +24,15 @@ world_data <- st_read(here::here("week4_hm_data", "World_Countries__Generalized_
 ```
 
 ###global gender data has 1008 variables so choose only those required
+
+Selecting only required fields, which are gender inequality index in 2019 and gender inequality index in 2010
+
 ```{r}
 gender_data_columns <- hdr_data %>%
   dplyr::select(c("iso3", "country", "region", "gii_2010","gii_2019"))
   
 ```
-###rearrange our subset data 
+###rearrange our subset gender inequality data to make it ready for the join process
 
 1. Change the name of iso3 column to standardize our data making the same name with world data
 2. Standardize all the column names
@@ -56,7 +59,7 @@ world_data_sub <- world_data %>%
   clean_names()
 class(world_data_sub)
 ```
-###Join our data to have a spatial world with gii from UNDP data
+###Join our data to have a spatial world data with gii from UNDP data
 
 ```{r}
 
