@@ -1,0 +1,20 @@
+#CASA0005 Week 4 Gender Inequality Homework - Hasan Guler
+
+#load libraries that we need
+```{r}
+
+library(sf)
+library(tmap)
+library(here)
+library(sp)
+```
+#load the global gender inequality data
+```{r}
+
+gender_data <- read.csv(here::here("week4_hm_data", "HDR21-22_Composite_indices_complete_time_series.csv"))
+```
+
+#load our spatial data, which is the boundries of countries in the world
+```{r}
+world_data <- read_sf(here::here("week4_hm_data", "World_Countries__Generalized_.shp"))
+```
