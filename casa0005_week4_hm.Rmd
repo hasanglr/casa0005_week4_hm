@@ -15,7 +15,10 @@ library(countrycode)
 ###load the global gender inequality data
 ```{r}
 
-hdr_data <- read.csv(here::here("week4_hm_data", "HDR21-22_Composite_indices_complete_time_series.csv"))
+hdr_data <- read.csv(here::here("week4_hm_data", "HDR21-22_Composite_indices_complete_time_series.csv"),
+                     fileEncoding = "latin1",
+                     na = " ",
+                     skip=0)
 ```
 
 ###load our spatial data, which is the boundries of countries in the world
